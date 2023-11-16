@@ -61,10 +61,12 @@ o nell'accesso devo inviare un errore 403/altro errore
 HOSTNAME = "127.0.0.1"
 SERVERPORT = 8080
 
+f = "utente.json"
 allenatori = []
+archivio = {"Utenti":[]}
 
 #Dizionario per la gestione degli utenti(allenatore)
-ArchivioAllenatori  = "utente.json"
+ArchivioAllenatori  = "allenatori.json"
 
 #Definisco una nuova classe  che eredita i metodi e le proprieta di BaseHttpRequestHandler(GET,POST)
 class ServerHandler(BaseHTTPRequestHandler):
@@ -79,119 +81,130 @@ class ServerHandler(BaseHTTPRequestHandler):
     def write_response(self, content):
         self.wfile.write(bytes(content,"utf-8")) #metodo scrive dati nel corpom della risposta HTTP, (self.wfile) associato di solito ai client , bytes(cont, "utf-8") questa parte converte la stringa 'content' in una sequenza di byte utilizzando l'encoding UTF-8
 
-    def do_GET(self):
-        print()
-
     def do_POST(self):
         if self.path == "/archivio_allenatori":
-            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
-            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            #se dobbiamo inserire dei giocatori
+            if self.path == "/archivio_allenatori/players":
+                content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+                post_data = self.rfile.read(content_length) # <--- Gets the data itself
 
-            js = post_data.decode("utf-8")
-            js = json.loads(js)
-            print(js)
+                jplayers = post_data.decode("utf-8")
+                jplayers = json.loads(jplayers)
+                print(jplayers)
+                archivio["Utenti"].append(jplayers)
 
-            nome_allenatore = js.get('name', '')
-            squadra = js.get('team', '')
+                #ora dobbiamo fare che mi prende il json me lo trasforma in dizionario e poi inserisce i player e me li mette all'interno di un json da capo
+                #DizPlayers = {"name":jplayers["name"],"surname":jplayers["surname"],"birth_year":jplayers["birth_year"]}
+                #js = str(js)
 
-            if nome_allenatore and squadra:
-                # Carica il vecchio archivio degli allenatori
-                with open(ArchivioAllenatori, 'r') as file:
-                    allenatori = json.load(file)
-                #ArchivioAllenatori.close()
-
-                # Aggiungi il nuovo allenatore
-                allenatori[nome_allenatore] = squadra
-                print(allenatori)
-
-                # Salva l'archivio aggiornato
-                with open(ArchivioAllenatori, 'w') as file:
-                    json.dump(allenatori, file)
+                #stampa file in json
+                with open("archivio.json", "w") as file:
+                    json.dump(archivio, file)
                 
-            #ArchivioAllenatori.close()
-            '''
-            #CODICE FUNZIONANTE NON CANCELLARE
-            js = post_data.decode("utf-8")
-            js = json.loads(js)
-            print(js)
-            with open("utente.json", "w") as file:
-                json.dump(js, file)             
-            self.send_response(200)
-            '''
-
-            '''
-            nome_allenatore = self.rfile.read(content_length)#linea di codice è responsabile di estrarre i dati inviati dal client nel corpo del messaggio della richiesta HTTP.
-            
-            nome_allenatore = data.get('nome_allenatore', '')
-            squadra = data.get('squadra', '')
-            
-            # Verifica se l'allenatore esiste già
-            if nome_allenatore in allenatori:
-                self.invia_errore(400, 'L\'allenatore esiste già. Scegli un altro nome.')
-                return
-
-            if nome_allenatore and squadra:
-                # Carica il vecchio archivio degli allenatori
-                with open(ArchivioAllenatori, 'r') as file:
-                    allenatori = json.load(file)
-
-                # Aggiungi il nuovo allenatore
-                allenatori[nome_allenatore] = squadra
-
-                # Salva l'archivio aggiornato
-                with open(ArchivioAllenatori, 'w') as file:
-                    json.dump(allenatori, file)
-            '''
-
-'''
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length'])  # lunghezza della richiesta
-        payload = self.rfile.read(content_length)
-        data = json.loads(payload.decode('utf-8'))
-
-        # Verifica se la richiesta è per la registrazione di un nuovo allenatore
-        if self.path == "/registra_allenatore":
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            nome_allenatore = self.rfile.read(content_length)   #linea di codice è responsabile di estrarre i dati inviati dal client nel corpo del messaggio della richiesta HTTP.
-            
-            nome_allenatore = data.get('nome_allenatore', '')
-            squadra = data.get('squadra', '')
-            
-
-            # Verifica se l'allenatore esiste già
-            #if nome_allenatore in allenatori:
-            #    self.invia_errore(400, 'L\'allenatore esiste già. Scegli un altro nome.')
-            #    return
-
-            if nome_allenatore and squadra:
-                # Carica il vecchio archivio degli allenatori
-                with open(ArchivioAllenatori, 'r') as file:
-                    allenatori = json.load(file)
-
-                # Aggiungi il nuovo allenatore
-                allenatori[nome_allenatore] = squadra
-
-                # Salva l'archivio aggiornato
-                with open(ArchivioAllenatori, 'w') as file:
-                    json.dump(allenatori, file)
-
-                # Invia una risposta di successo al client
                 self.send_response(200)
-                self.send_header('Content-type', 'application/json') #?
-                self.end_headers()                                  #?
-                #response = {'messaggio': 'Allenatore registrato con successo'}
-                #self.wfile.write(json.dumps(response).encode('utf-8'))
-                self.set_headers("text/html") #invio la risposta
-                self.write_response("tutto ok")
+
             else:
-                # Invia una risposta di errore al client
-                self.send_response(400)
-                self.send_header('Content-type', 'application/json')
+                content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+                post_data = self.rfile.read(content_length) # <--- Gets the data itself
+
+                js = post_data.decode("utf-8")
+                js = json.loads(js)
+                print(js)
+                #js = str(js)
+                #stampa file in json
+                with open("utente.json", "w") as file:
+                    json.dump(allenatori, file)
+
+                #file_uno = open("esempio_uno.txt", "w")
+                #file_uno.write(js)
+                #file_uno.close()    # ricordate sempre di chiudere i file!
+                            
+
+
+
+
+                #print(post_data)
+                #item = json.loads(post_data.decode('utf-8'))
+
+
+
+
+                self.send_response(200)
+                #nome_allenatore = self.rfile.read(content_length)
+
+                #allenatori.append(item)
+                #print(allenatori)
+                #f.write(json.dumps(st, indent = 4))
+                #allenatori.append(item)
+    '''
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain")
                 self.end_headers()
-                response = {'errore': 'Parametri mancanti per la registrazione dell\'allenatore'}
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-'''
+                self.wfile.write("Elemento aggiunto alla lista della alllenatore.".encode())
+                
+                nome_squadra_json = {"name" : "", "team" : ""}
+                name = item["name"]
+                team = item["team"]
+                dict_allenatore = {"name" : name,
+                                "team" : team}
+                st = str(dict_allenatore)
+                f.write(json.dumps(st, indent = 4))
+                print(dict_allenatore)
+                #print(item)
+                '''
+
+
+    '''
+        def do_POST(self):
+            content_length = int(self.headers['Content-Length'])  # lunghezza della richiesta
+            payload = self.rfile.read(content_length)
+            data = json.loads(payload.decode('utf-8'))
+
+            # Verifica se la richiesta è per la registrazione di un nuovo allenatore
+            if self.path == "/registra_allenatore":
+                """content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                item = json.loads(post_data.decode('utf-8'))
+                lista_spesa.append(item)"""
+                nome_allenatore = self.rfile.read(content_length)#linea di codice è responsabile di estrarre i dati inviati dal client nel corpo del messaggio della richiesta HTTP.
+                
+                nome_allenatore = data.get('nome_allenatore', '')
+                squadra = data.get('squadra', '')
+                
+
+                # Verifica se l'allenatore esiste già
+                #if nome_allenatore in allenatori:
+                #    self.invia_errore(400, 'L\'allenatore esiste già. Scegli un altro nome.')
+                #    return
+
+                if nome_allenatore and squadra:
+                    # Carica il vecchio archivio degli allenatori
+                    with open(ArchivioAllenatori, 'r') as file:
+                        allenatori = json.load(file)
+
+                    # Aggiungi il nuovo allenatore
+                    allenatori[nome_allenatore] = squadra
+
+                    # Salva l'archivio aggiornato
+                    with open(ArchivioAllenatori, 'w') as file:
+                        json.dump(allenatori, file)
+
+                    # Invia una risposta di successo al client
+                    self.send_response(200)
+                    self.send_header('Content-type', 'application/json') #?
+                    self.end_headers()                                  #?
+                    #response = {'messaggio': 'Allenatore registrato con successo'}
+                    #self.wfile.write(json.dumps(response).encode('utf-8'))
+                    self.set_headers("text/html") #invio la risposta
+                    self.write_response("tutto ok")
+                else:
+                    # Invia una risposta di errore al client
+                    self.send_response(400)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    response = {'errore': 'Parametri mancanti per la registrazione dell\'allenatore'}
+                    self.wfile.write(json.dumps(response).encode('utf-8'))
+    '''
 #verifico se lo script è stato eseguito direttamente 
 if __name__ == "__main__":
     #Eseguo il server e verifico se è in ascolto

@@ -53,11 +53,15 @@ def ArchivioUtenti():
     response = requests.get(url) #utilizzo la libreria requests per effetuare la richiesta GET all'URL specificato. risposta memorizzata nella variabile response
     return response.json()  #restituisce i dati della risposta sotto forma di JSON
 
-def addPlayer(item):
-    url = "http://"+IPADDRESS+":"+PORTADDRESS+ "/newplayers"
+def addPlayers(item):
+    url = "http://" + ip_address + ":" + port + "/archivio_allenatori/players"
+    headers = {'Content-type' : 'application/json'} #tipo di dato che mando
+    response = requests.post(url, data=item, headers=headers)
+    return response
+    """url = "http://"+IPADDRESS+":"+PORTADDRESS+ "/newplayers"
     headers = {'Content-type': 'application/json'}
     response = requests.post(url, data=json.dumps(item), headers=headers)
-    return response.text
+    return response.text"""
 
 def addAllenatore(item): #poi cambia nome se vuoi
     url = "http://" + ip_address + ":" + port + "/archivio_allenatori"
@@ -65,18 +69,56 @@ def addAllenatore(item): #poi cambia nome se vuoi
     response = requests.post(url, data=item, headers=headers)
     return response
 
+
+#continua = True
+
+#while continua:
+        
+
+#Mi permette di inserire un nuovo Utente
+
 nome_utente = input("Inserisci il tuo nome utente: ")
 team_utente = input("Inserisci nome della tua squadra: ")
-
-allenatore = {"name":nome_utente,"team":team_utente}
-            #people.append(persona.copy()) 
+allenatore = {"name":nome_utente,"team":team_utente} 
 jsallenatore = (json.dumps(allenatore))
 print (allenatore)
-addAllenatore(jsallenatore)
+#addAllenatore(jsallenatore)
+
+
+#Andiamo ad inserire giocatori all interno di un team
+players = {"Allenatore( "+ nome_utente +" ) e Squadra( "+ team_utente +" ) Players:":[]}
+RispRichiestaTeam = input("Hai intezione di inserire dei giocatori all'interno del tuo team [y/n]: \n")
+if RispRichiestaTeam == "y":
+    player_number = 0
+    while RispRichiestaTeam == "y":
+        player_name = input("Inserisci il nome del player: \n")
+        player_surname = input("Inserisci il cognome del player: \n")
+        player_year = input("Inserisci l'anno di nascita del player del player: \n")
+
+        player = {"name":player_name,"surname":player_surname, "birth_year": player_year}
+        player_number += 1
+        #players["Player"+ str(player_number)]= player
+        players["Allenatore( "+ nome_utente +" ) e Squadra( "+ team_utente +" ) Players:"].append(player)
+        RispRichiestaTeam = input("Hai intezione di inserire altri giocatori all'interno del tuo team [y/n] \n")
+
+    jsplayers = (json.dumps(players))#trasformo il dizionario in json
+    print(jsplayers) 
+    addPlayers(jsplayers)
+   
+
+elif RispRichiestaTeam == "n":
+    print("Richiesta di inserire utente rifiutata")
+
+else:
+    print("Valore inserito non coretto")
+
+
 
 #file.write(json.dumps(allenatore, indent=4))
 
 #file.close()
+
+
 
 #print("File Aperto")
 #file = open("Utonto.json", "r")
@@ -87,5 +129,18 @@ addAllenatore(jsallenatore)
 #print("Elimino il file")
 #os.remove("Utonto.json") 
 
+
+
+#continua = True
+#richieste_utente = 0
+
+'''
+Scrivere un programma in python il quale, attraverso l'uso di un server, permetterà la gestione delle convocazioni dei giocatori di una squadra.
+
+Il programma dovrà permettere le seguenti funzionalità:
+
+1 Un utente (allenatore) si registra al sito attraverso il suo nome e il nome della squadra che allena. Tutti i futuri acessi avverrano attraverso questi due parametri.
+'''
 #nome_utente = input("Inserisci il tuo nome utente: ")
 #nome_squadra = input("Inserisci il nome della tua squadra: ")
+
