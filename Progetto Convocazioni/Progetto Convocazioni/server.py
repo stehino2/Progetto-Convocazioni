@@ -61,7 +61,7 @@ o nell'accesso devo inviare un errore 403/altro errore
 HOSTNAME = "127.0.0.1"
 SERVERPORT = 8080
 
-file = open("allenatori.json", "w")
+#file = open("allenatori.json", "w")
 
 f = "utente.json"
 allenatori = []
@@ -93,20 +93,32 @@ class ServerHandler(BaseHTTPRequestHandler):
             js = json.loads(js)
             print(js)
             
-            with open("allenatori.json", "w") as file:
-                file.write(js)
+            #with open("allenatori.json", "w") as file:
+            #    file.write(js)
 
-            #api_planets = requests.get("https://swapi.dev/api/planets/" + str(i)) #considero i come il numero della pagina
-            #planets = json.loads(api_planets.text)
             name = js["name"]
             team = js["team"]
 
-            print(name)
-            print(team)
+            #name = post_data.get("name")
+            #team = post_data.get("team")
+
+            #print(name)
+            #print(team)
+
+            #if name and team:
+            # Carica il vecchio archivio degli allenatori
+            with open(ArchivioAllenatori, 'r') as file:
+                allenatori = json.load(file)
+
+            # Aggiungi il nuovo allenatore
+            allenatori[name] = team
+
+            # Salva l'archivio aggiornato
+            with open(ArchivioAllenatori, 'w') as file:
+                json.dump(allenatori, file)
 
             #fai un dizionario, cnttrolla se sstono gia i nomi e inseriscili nel fuile tramite il dizionario
             #dict_
-
 
             #js = str(js)
             #stampa file in json
