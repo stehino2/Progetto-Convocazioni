@@ -256,6 +256,7 @@ import json
 
 ip_address = "127.0.0.1"
 port = "8080"
+#url = "http://" + ip_address + ":" + port + "/archivio_allenatori"
 
 def addTrainer(item):
     url = "http://" + ip_address + ":" + port + "/archivio_allenatori"
@@ -275,11 +276,20 @@ def access_layout():
 def register_layout():
     layout = [
         [sg.Text("Registrazione Allenatore")],
-        [sg.Text("Nome Allenatore"), sg.InputText(key = "trainer_name")],
+        [sg.Text("Nome allenatore"), sg.InputText(key = "trainer_name")],
         [sg.Text("Nome Squadra"), sg.InputText(key = "team_name")],
         [sg.Button("Registra"), sg.Button("Annulla")]
     ]
     return layout
+
+def addPlayers_layout():
+    layout = [
+        [sg.Text("Registrazione Giocatore")],
+        [sg.Text("Nome"), sg.InputText(key = "player_name")],
+        [sg.Text("Cognome"), sg.InputText(key = "player_surname")],
+        [sg.Text("Anno di nascita"), sg.InputText(key = "player_year")],
+        [sg.Button("Aggiungi")]
+    ]
 
 def main():
     sg.theme("DefaultNoMoreNagging") #tema della finestra
@@ -295,13 +305,30 @@ def main():
             trainer_name = values_access["trainer_name"]
             team_name = values_access["team_name"]
 
+            #sg.PopupOK("Accesso effettuato col nome " + trainer_name + " e con la squadra " + team_name, title = "Accesso effettuato!")
+
             trainer = {"name" : trainer_name, "team" : team_name} 
             trainer = (json.dumps(trainer))
-            addTrainer(trainer) 
+            addTrainer(trainer)
+            #response = requests.post(url, data = trainer)
+
+            yes_no = sg.popup_yes_no("Accesso effetuato con successo, vuoi aggiungere giocatori alla tua squadra?", title = "TITOLO ANCORA DA DARE") 
+            if yes_no == "Yes":
+                access_window.hide()
+                addplayers_window = sg.Window("Aggiungi Giocatori", addPlayers_layout())
+                
+
+                if addplayers_window:
+                    event_players, values_players = addplayers_window.read()
+
+                if event_access == sg.WIN_CLOSED: #chiudo la finestra
+                    break
+            else:
+                print("hai premuto no")
 
         #dopo aver inserito i dati, devo chiudere la finestra e aprirne un'altra per inserire i giocatori
 
-        elif event_access == 'Registrati':
+        elif event_access == "Registrati":
             access_window.hide()
             register_window = sg.Window("Registrazione Allenatore", register_layout())
 
@@ -311,12 +338,13 @@ def main():
             if event_reg in (sg.WIN_CLOSED, "Annulla"):
                 access_window.un_hide()
                 register_window.close()
-                #register_window = None
-                #vorrei tornare indietro di scheda, e tornare alla pagina di accesso
+                #da aggiungere che quando premo il bottone Annulla torno indietro alla pagina di accesso
 
             elif event_reg == "Registra":
                 trainer_name = values_reg["trainer_name"]
                 team_name = values_reg["team_name"]
+
+                sg.PopupOK("Registrazione effettuata col nome " + trainer_name + " e con la squadra " + team_name, title = "Registrazione effettuata!")
 
                 trainer = {"name" : trainer_name, "team" : team_name} 
                 trainer = (json.dumps(trainer))
@@ -324,5 +352,5 @@ def main():
 
         access_window.close()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
