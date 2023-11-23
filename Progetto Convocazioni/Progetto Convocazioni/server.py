@@ -61,10 +61,9 @@ o nell'accesso devo inviare un errore 403/altro errore
 HOSTNAME = "127.0.0.1"
 SERVERPORT = 8080
 
-#file = open("allenatori.json", "w")
-#f = "utente.json"
 allenatori = []
 archivio = {"Utenti":[]}
+archivio_json = "allenatori.json"
 #RegistroAccessi = {"Acessi":[]}
 
 #Dizionario per la gestione degli utenti(allenatore)
@@ -87,7 +86,25 @@ class ServerHandler(BaseHTTPRequestHandler):
         if self.path == "/archivio_allenatori":       
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
-            """js = post_data.decode("utf-8")
+            dato_decodato = post_data.decode("utf-8")
+
+            dict_dato_decodato = json.loads(dato_decodato)
+            print(dato_decodato)
+
+            allenatori.append(dict_dato_decodato)
+            print(allenatori)
+
+            '''
+            with open(archivio_json, "r") as json_file:
+                existing_data = json.loads(json_file)
+
+            existing_data.update(dict_dato_decodato)
+
+            with open(archivio_json, "w") as json_file:
+                json.dump(existing_data, json_file, indent=2)
+            '''
+
+            """
             js = json.loads(js)"""
             #print("JSON: " + js)
             
@@ -106,20 +123,20 @@ class ServerHandler(BaseHTTPRequestHandler):
             
             #salvo i dati all'interno di un file JSON
             
-            name = post_data.get("trainer_name")
-            team = post_data.get("team_name")
+            #name = post_data.get("trainer_name")
+            #team = post_data.get("team_name")
 
             #controllo se esistono già le credenziali nel file json
 
-            with open("allenatori.json", "r") as file:
-                RegistroAccessi = json.load(file)
+#            with open("allenatori.json", "r") as file:
+#                RegistroAccessi = json.load(file)
             
-            RegistroAccessi.append(data_dict)
-            allenatori[name] = team
+#            RegistroAccessi.append(data_dict)
+            #allenatori[name] = team
             
-            with open("allenatori.json", "w") as file:
+#            with open("allenatori.json", "w") as file:
                 #json.dump(RegistroAccessi, file)
-                json.dump(allenatori, file)
+#                json.dump(allenatori, file)
             
             self.send_response(200)
             self.end_headers()
