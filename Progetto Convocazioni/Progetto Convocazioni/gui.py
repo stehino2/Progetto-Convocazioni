@@ -256,7 +256,6 @@ import json
 
 ip_address = "127.0.0.1"
 port = "8080"
-#url = "http://" + ip_address + ":" + port + "/archivio_allenatori"
 
 def addTrainer(item):
     url = "http://" + ip_address + ":" + port + "/archivio_allenatori"
@@ -264,6 +263,13 @@ def addTrainer(item):
     response = requests.post(url, data = item, headers = headers)
     return response
 
+def addPlayer(item):
+    url = "http://" + ip_address + ":" + port + "/giocatori"
+    headers = {'Content-type' : 'application/json'} #tipo di dato che mando
+    response = requests.post(url, data = item, headers = headers)
+    return response
+
+'''
 def access_layout():
     layout = [
         [sg.Text("Accesso Allenatore")],
@@ -290,7 +296,118 @@ def addPlayers_layout():
         [sg.Text("Anno di nascita"), sg.InputText(key = "player_year")],
         [sg.Button("Aggiungi")]
     ]
+    return layout
+'''
 
+def login_screen():
+    layout = [
+        [sg.Text("Accesso Allenatore")],
+        [sg.Text("Nome Allenatore"), sg.InputText(key = "trainer_name")],
+        [sg.Text("Nome Squadra"), sg.InputText(key = "team_name")],
+        [sg.Button("Accedi"), sg.Button("Registrati")]
+    ]
+
+    window = sg.Window("TITOLO", layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WINDOW_CLOSED:
+            break
+        elif event == "Accedi":
+            trainer_name = values["trainer_name"]
+            team_name = values["team_name"]
+
+            #sg.PopupOK("Accesso effettuato col nome " + trainer_name + " e con la squadra " + team_name, title = "Accesso effettuato!")
+
+            trainer = {"name" : trainer_name, "team" : team_name} 
+            trainer = (json.dumps(trainer))
+            addTrainer(trainer)
+
+            window.hide()
+            #window.close()
+            main_screen(trainer_name)
+        elif event == "Registrati":
+            #window.close()
+            register_screen()
+
+    window.close()
+
+def register_screen():
+    layout = [
+        [sg.Text("Registrazione Allenatore")],
+        [sg.Text("Nome allenatore"), sg.InputText(key = "trainer_name")],
+        [sg.Text("Nome Squadra"), sg.InputText(key = "team_name")],
+        [sg.Button("Registra"), sg.Button("Annulla")]
+    ]
+
+    window = sg.Window("TITOLO", layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WINDOW_CLOSED:
+            break
+        elif event == "Registra":
+            trainer_name = values["trainer_name"]
+            team_name = values["team_name"]
+
+            sg.PopupOK("Registrazione effettuata col nome " + trainer_name + " e con la squadra " + team_name, title = "Registrazione effettuata!")
+
+            trainer = {"name" : trainer_name, "team" : team_name} 
+            trainer = (json.dumps(trainer))
+            addTrainer(trainer)
+
+    window.close()
+
+def main_screen(trainer_name):
+    layout = [
+        [sg.Text("Benvenuto allenatore " + trainer_name)],
+        [sg.Button("Aggiungi giocatore"), sg.Button("Logout")]
+    ]
+    window = sg.Window("TILOTO", layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WINDOW_CLOSED or event == "Logout":
+            break
+        elif event == "Aggiungi giocatore":
+            add_players_screen(trainer_name)
+
+    window.close()
+
+def add_players_screen(trainer_name):
+    layout = [
+        [sg.Text("Registrazione Giocatore")],
+        [sg.Text("Nome"), sg.InputText(key = "player_name")],
+        [sg.Text("Cognome"), sg.InputText(key = "player_surname")],
+        [sg.Text("Anno di nascita"), sg.InputText(key = "player_year")],
+        [sg.Button("Aggiungi")]
+    ]
+
+    window = sg.Window('Add Players', layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WINDOW_CLOSED: #agigungi tasto
+            break
+        elif event == "Aggiungi":
+            player_name = values["player_name"]
+            player_surname = values["player_surname"]
+            player_birth_year = values["player_birth_year"]
+            player = {"name": player_name, "surname": player_surname, "birth_year": player_birth_year}
+            player = (json.dumps(player))
+            addPlayer(player)
+            print(player)
+
+    window.close()    
+
+if __name__ == '__main__':
+    login_screen()
+
+'''
 def main():
     sg.theme("DefaultNoMoreNagging") #tema della finestra
 
@@ -354,3 +471,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
