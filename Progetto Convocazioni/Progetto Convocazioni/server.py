@@ -62,10 +62,10 @@ HOSTNAME = "127.0.0.1"
 SERVERPORT = 8080
 
 #file = open("allenatori.json", "w")
-
-f = "utente.json"
+#f = "utente.json"
 allenatori = []
 archivio = {"Utenti":[]}
+#RegistroAccessi = {"Acessi":[]}
 
 #Dizionario per la gestione degli utenti(allenatore)
 ArchivioAllenatori  = "allenatori.json"
@@ -84,20 +84,47 @@ class ServerHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(content,"utf-8")) #metodo scrive dati nel corpom della risposta HTTP, (self.wfile) associato di solito ai client , bytes(cont, "utf-8") questa parte converte la stringa 'content' in una sequenza di byte utilizzando l'encoding UTF-8
 
     def do_POST(self):
-        if self.path == "/archivio_allenatori":
-                
+        if self.path == "/archivio_allenatori":       
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
-
-            js = post_data.decode("utf-8")
-            js = json.loads(js)
-            print(js)
+            """js = post_data.decode("utf-8")
+            js = json.loads(js)"""
+            #print("JSON: " + js)
             
             #with open("allenatori.json", "w") as file:
             #    file.write(js)
 
-            name = js["name"]
-            team = js["team"]
+            #with open("allenatori.json", "r") as file:
+            #    existing_data = json.load(file)
+
+            # Converti i dati in un dizionario
+            data_dict = json.loads(post_data)
+            print('Dati ricevuti:')
+            print(data_dict)
+
+            #åggiungo i giocatori all internomn dell archivio
+            
+            #salvo i dati all'interno di un file JSON
+            
+            name = post_data.get("trainer_name")
+            team = post_data.get("team_name")
+
+            #controllo se esistono già le credenziali nel file json
+
+            with open("allenatori.json", "r") as file:
+                RegistroAccessi = json.load(file)
+            
+            RegistroAccessi.append(data_dict)
+            allenatori[name] = team
+            
+            with open("allenatori.json", "w") as file:
+                #json.dump(RegistroAccessi, file)
+                json.dump(allenatori, file)
+            
+            self.send_response(200)
+            self.end_headers()
+            """name = js["name"]
+            team = js["team"]"""
 
             #name = post_data.get("name")
             #team = post_data.get("team")
@@ -107,6 +134,7 @@ class ServerHandler(BaseHTTPRequestHandler):
 
             #if name and team:
             # Carica il vecchio archivio degli allenatori
+            """
             with open(ArchivioAllenatori, 'r') as file:
                 allenatori = json.load(file)
 
@@ -116,7 +144,7 @@ class ServerHandler(BaseHTTPRequestHandler):
             # Salva l'archivio aggiornato
             with open(ArchivioAllenatori, 'w') as file:
                 json.dump(allenatori, file)
-
+            """           
             #fai un dizionario, cnttrolla se sstono gia i nomi e inseriscili nel fuile tramite il dizionario
             #dict_
 
@@ -126,7 +154,6 @@ class ServerHandler(BaseHTTPRequestHandler):
             file.write(archivio)
             file.close()
             """
-            self.send_response(200)
 
         #se dobbiamo inserire dei giocatori
         elif self.path == "/players":
