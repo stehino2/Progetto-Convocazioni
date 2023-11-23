@@ -75,8 +75,8 @@ nome_utente = input("Inserisci il tuo nome utente: ")
 team_utente = input("Inserisci nome della tua squadra: ")
 allenatore = {"name":nome_utente,"team":team_utente} 
 jsallenatore = (json.dumps(allenatore))
-print (allenatore)
-#addAllenatore(jsallenatore)
+print (jsallenatore)
+addAllenatore(jsallenatore)
 
 #Andiamo ad inserire giocatori all interno di un team
 players = {"Allenatore( "+ nome_utente +" ) e Squadra( "+ team_utente +" ) Players:":[]}
