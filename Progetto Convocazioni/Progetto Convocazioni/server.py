@@ -58,16 +58,10 @@ o nell'accesso devo inviare un errore 403/altro errore
 
 '''
 
-HOSTNAME = "127.0.0.1"
-SERVERPORT = 8080
+ip_address = "127.0.0.1"
+port = 8080
 
-allenatori = []
-archivio = {"Utenti":[]}
-archivio_json = "allenatori.json"
-#RegistroAccessi = {"Acessi":[]}
-
-#Dizionario per la gestione degli utenti(allenatore)
-ArchivioAllenatori  = "allenatori.json"
+fArchivio = "Archivio.json"
 
 #Definisco una nuova classe  che eredita i metodi e le proprieta di BaseHttpRequestHandler(GET,POST)
 class ServerHandler(BaseHTTPRequestHandler):
@@ -86,91 +80,45 @@ class ServerHandler(BaseHTTPRequestHandler):
         if self.path == "/archivio_allenatori":       
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
-            dato_decodato = post_data.decode("utf-8")
+            decoded_data = post_data.decode("utf-8")
+            dict_data = json.loads(decoded_data) 
+            print(decoded_data) #stampo il dizionario, che contiene le informazioni che mi sono arrivate dal client
 
-            dict_dato_decodato = json.loads(dato_decodato)
-            print(dato_decodato)
+            with open(fArchivio, "r") as file:
+                try:
+                #carico i dati già esistenti nel file json
+                    data = json.load(file)
+                except json.JSONDecodeError:
+                    #se il file json è vuoto inizializzo una struttura valida, 
+                    #così da poter scriverci all'interno senza che mi dia errori
+                    data = {"Trainers": []}
+                
+            #controllo se esiste "Trainers" all'interno del file json (probaiblmente posso elimiare)
+            if "Trainers" not in data or not isinstance(data["Trainers"], list):
+                data["Trainers"] = []
 
-            allenatori.append(dict_dato_decodato)
-            print(allenatori)
+            #cerco il nome dell'allenatore e il nome della squadra nel file json
+            trainer_name = dict_data["trainer_name"]
+            trainer_team = dict_data["team_name"]
 
-            '''
-            with open(archivio_json, "r") as json_file:
-                existing_data = json.loads(json_file)
+            #creo il dizionario contentenente il nome dell'allenatore e il nome della squadra
+            nuovo_elemento = {"trainer_name": trainer_name, "trainer_team": trainer_team}
 
-            existing_data.update(dict_dato_decodato)
+            # Aggiungi il nuovo elemento alla lista
+            data["Trainers"].append(nuovo_elemento)
 
-            with open(archivio_json, "w") as json_file:
-                json.dump(existing_data, json_file, indent=2)
-            '''
-
-            """
-            js = json.loads(js)"""
-            #print("JSON: " + js)
-            
-            #with open("allenatori.json", "w") as file:
-            #    file.write(js)
-
-            #with open("allenatori.json", "r") as file:
-            #    existing_data = json.load(file)
+            # Ora apri il file in modalità scrittura
+            with open(fArchivio, "w") as file:
+                # Scrivi la nuova struttura dati JSON nel file
+                json.dump(data, file, indent=4)
 
             # Converti i dati in un dizionario
             data_dict = json.loads(post_data)
-            print('Dati ricevuti:')
+            print("Dati ricevuti: ")
             print(data_dict)
-
-            #åggiungo i giocatori all internomn dell archivio
-            
-            #salvo i dati all'interno di un file JSON
-            
-            #name = post_data.get("trainer_name")
-            #team = post_data.get("team_name")
-
-            #controllo se esistono già le credenziali nel file json
-
-#            with open("allenatori.json", "r") as file:
-#                RegistroAccessi = json.load(file)
-            
-#            RegistroAccessi.append(data_dict)
-            #allenatori[name] = team
-            
-#            with open("allenatori.json", "w") as file:
-                #json.dump(RegistroAccessi, file)
-#                json.dump(allenatori, file)
             
             self.send_response(200)
             self.end_headers()
-            """name = js["name"]
-            team = js["team"]"""
-
-            #name = post_data.get("name")
-            #team = post_data.get("team")
-
-            #print(name)
-            #print(team)
-
-            #if name and team:
-            # Carica il vecchio archivio degli allenatori
-            """
-            with open(ArchivioAllenatori, 'r') as file:
-                allenatori = json.load(file)
-
-            # Aggiungi il nuovo allenatore
-            allenatori[name] = team
-
-            # Salva l'archivio aggiornato
-            with open(ArchivioAllenatori, 'w') as file:
-                json.dump(allenatori, file)
-            """           
-            #fai un dizionario, cnttrolla se sstono gia i nomi e inseriscili nel fuile tramite il dizionario
-            #dict_
-
-            #js = str(js)
-            #stampa file in json
-            """global file
-            file.write(archivio)
-            file.close()
-            """
 
         #se dobbiamo inserire dei giocatori
         elif self.path == "/players":
@@ -180,17 +128,8 @@ class ServerHandler(BaseHTTPRequestHandler):
             jplayers = post_data.decode("utf-8")
             jplayers = json.loads(jplayers)
             print(jplayers)
-            archivio["Utenti"].append(jplayers)
 
-            #ora dobbiamo fare che mi prende il json me lo trasforma in dizionario e poi inserisce i player e me li mette all'interno di un json da capo
-            #DizPlayers = {"name":jplayers["name"],"surname":jplayers["surname"],"birth_year":jplayers["birth_year"]}
-            #js = str(js)
-
-            #stampa file in json
-            with open("archivio.json", "w") as file:
-                json.dump(archivio, file)
-            
-            self.send_response(200)
+            #self.send_response(200)
         
             #nome_allenatore = self.rfile.read(content_length)
 
@@ -271,7 +210,7 @@ class ServerHandler(BaseHTTPRequestHandler):
 #verifico se lo script è stato eseguito direttamente 
 if __name__ == "__main__":
     #Eseguo il server e verifico se è in ascolto
-    webServer = HTTPServer((HOSTNAME,SERVERPORT),ServerHandler)
+    webServer = HTTPServer((ip_address,port),ServerHandler)
     print("Server Started")
 
     try:
