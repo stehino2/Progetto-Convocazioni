@@ -1,0 +1,12 @@
+{
+    "Trainers": [
+        {
+            "trainer_name": "Andrei",
+            "team_name": "Barcellona" 
+        },
+        {
+            "trainer_name": "Mattew",
+            "team_name": "Real Madrid"
+        }
+    ]
+}
