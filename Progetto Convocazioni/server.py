@@ -89,15 +89,15 @@ class ServerHandler(BaseHTTPRequestHandler):
         team_name = datad["team_name"]
 
         #creo il dizionario contentenente il nome dell'allenatore e il nome della squadra
-        nuovo_elemento = {"trainer_name": trainer_name, "team_name": team_name}
+        trainer = {"trainer_name": trainer_name, "team_name": team_name}
 
-        if nuovo_elemento in data.get("Trainers", []):
+        if trainer in data.get("Trainers", []):
             self.send_error(403, "Elemento già esistente, effettua l'accesso") #errore più opportuno
             self.end_headers()
             return
         else:
             # Aggiungi il nuovo elemento alla lista
-            data["Trainers"].append(nuovo_elemento)
+            data["Trainers"].append(trainer)
 
             # Ora apri il file in modalità scrittura
             with open(fArchivio, "w") as file:
@@ -126,9 +126,10 @@ class ServerHandler(BaseHTTPRequestHandler):
         team_name = datad["team_name"]
 
         #creo il dizionario contentenente il nome dell'allenatore e il nome della squadra
-        nuovo_elemento = {"trainer_name": trainer_name, "team_name": team_name}
+        global global_trainer 
+        global_trainer = {"trainer_name": trainer_name, "team_name": team_name}
 
-        if nuovo_elemento in data.get("Trainers", []):
+        if global_trainer in data.get("Trainers", []):
             self.send_response(200)
             self.end_headers()
             return
@@ -137,7 +138,13 @@ class ServerHandler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         
-    def add_player(self, datad):
+    '''
+    LOGICA DI FUNZIONAMENTO DI ADD_PLAYER:
+    CHIEDO IL NOME DEL TRAINER E LA SQUADRA, CERCO NEL FILE JSON QUESTI DUE, QUANDO LO TROVO, CREO UNA NUOVA SEZIONE, CHIAMATA
+    PLAYERS E INSERISCO IO NOME, COGNOME, DATA
+    '''
+
+    def add_player(self, recived_data):
         with open(fArchivio, "r") as file:
             try:
             #carico i dati già esistenti nel file json
@@ -146,19 +153,40 @@ class ServerHandler(BaseHTTPRequestHandler):
                 #se il file json è vuoto inizializzo una struttura valida, 
                 #così da poter scriverci all'interno senza che mi dia errori
                 data = {"Trainers": []}
+
+        '''
+        POTREI ANCHE TOGLIERE LA PARTE DI CONTROLLO TRY CATCH E ANCHE IF TRAINERS NOT IN DATA ETCC..
+        '''
                 
         #controllo se esiste "Trainers" all'interno del file json (probabilmente posso eliminare questa riga di codice)
         if "Trainers" not in data or not isinstance(data["Trainers"], list):
             data["Trainers"] = []
+        
+        player_name = recived_data["player_name"]
+        player_surname = recived_data["player_surname"]
+        player_birth = recived_data["player_birth"]
+        player = {"player_name": player_name, "player_surname": player_surname, "player_birth": player_birth}
 
-        #
-        player_name = datad["player_name"]
-        player_surname = datad["player_surname"]
-        player_birth = datad["player_birth_year"]
+        print(global_trainer)
 
-        #creo il dizionario contentenente il nome dell'allenatore e il nome della squadra
-        trainer = {"trainer_name": trainer_name, "team_name": team_name}
+        for global_trainer in data["Trainers"]:
+            if "players" not in global_trainer:
+                global_trainer["players"] = []
+            global_trainer["players"].append(player)
 
+        # Salva i dati aggiornati nel file JSON
+            with open(fArchivio, "w") as file:
+                json.dump(data, file, indent=4)
+
+            # Invia una risposta di successo
+            self.send_response(200)
+            self.end_headers()
+        else:
+            # L'allenatore non esiste
+            self.send_error(401, "Allenatore non trovato")
+            self.end_headers()
+
+        '''
         if trainer in data.get("Trainers", []):
              # Trovato l'allenatore, ora aggiungi il giocatore
             trainer_data = next((item for item in data["Trainers"] if item["trainer_name"] == trainer_name and item["team_name"] == team_name), None)
@@ -181,7 +209,8 @@ class ServerHandler(BaseHTTPRequestHandler):
             self.send_response(401) #errore più opporturno
             self.end_headers()
             return
-
+        '''
+            
 #verifico se lo script è stato eseguito direttamente 
 if __name__ == "__main__":
     #Eseguo il server e verifico se è in ascolto
