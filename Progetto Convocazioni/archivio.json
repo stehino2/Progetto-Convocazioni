@@ -2,11 +2,81 @@
     "Trainers": [
         {
             "trainer_name": "Andrei",
-            "team_name": "Barcellona" 
+            "team_name": "Barcellona",
+            "players": [
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                }
+            ]
         },
         {
             "trainer_name": "Mattew",
-            "team_name": "Real Madrid"
+            "team_name": "Real Madrid",
+            "players": [
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                }
+            ]
+        },
+        {
+            "trainer_name": "Andrea",
+            "team_name": "Manchester",
+            "players": [
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                },
+                {
+                    "player_name": "Cristiano",
+                    "player_surname": "Ronaldo",
+                    "player_birth": "1990"
+                }
+            ]
         }
     ]
 }
