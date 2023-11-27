@@ -13,12 +13,15 @@
     - [] potresti mettere i send_error al posto dei send_response quando invio dati al client
     - [] cambiare alcuni nomi variabili
     - # potremmo modificare la schermata di accesso, quando premo registrati invece di mandarmi a una nuova scheda, mi registra direttamente
+    - [] aggiungere qualche controllo al nome e nome squadra magari
+    - [] evitare di mettere nome all e nome sq vuoti
 
 - [] L'allenatore potrà attraverso una schermata aggiungere giocatori alla sua squadra, inserendo: Nome, Cognome, Anno di nascita. (L'aggiunta di giocatori dovrà essere possibile in qualsiasi momento).
     - [x] layout della pagina
     # layout da completare/migliorare
     - [] aggiunta player nel server
     # non funziona aggiunta player
+    - [] aggiungere controlli ai nomi, cognomi, date
 
 - [] L'allenatore dovrà poter rimuovere un giocatore dalla lista o poter modificare uno dei dati di quelli inseriti in precedenza.
 
