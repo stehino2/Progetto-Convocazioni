@@ -137,7 +137,7 @@ def main_screen(trainer_name):
     window = sg.Window("Selezione", layout)
 
     while True:
-        event = window.read()
+        event, values = window.read()
 
         if event == sg.WINDOW_CLOSED or event == "Logout":
             break
@@ -151,8 +151,8 @@ def add_players_screen(trainer_name):
         [sg.Text("Registrazione Giocatore")],
         [sg.Text("Nome"), sg.InputText(key = "player_name")],
         [sg.Text("Cognome"), sg.InputText(key = "player_surname")],
-        [sg.Text("Anno di nascita"), sg.InputText(key = "player_birth_year")],
-        [sg.Button("Aggiungi"), sg.Button("PULSANTE")]
+        [sg.Text("Anno di nascita"), sg.InputText(key = "player_birth")],
+        [sg.Button("Aggiungi"), sg.Button("Modifica"), sg.Button("Rimuovi")]
     ]
 
     window = sg.Window("Aggiunta Giocatori", layout)
@@ -165,8 +165,8 @@ def add_players_screen(trainer_name):
         elif event == "Aggiungi":
             player_name = values["player_name"]
             player_surname = values["player_surname"]
-            player_birth_year = values["player_birth_year"]
-            player = {"name": player_name, "surname": player_surname, "birth_year": player_birth_year}
+            player_birth = values["player_birth"]
+            player = {"player_name": player_name, "player_surname": player_surname, "player_birth": player_birth}
             player = (json.dumps(player))
             addPlayer(player)
 
