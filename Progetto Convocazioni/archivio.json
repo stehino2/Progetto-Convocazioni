@@ -77,6 +77,14 @@
                     "player_birth": "1990"
                 }
             ]
+        },
+        {
+            "trainer_name": "Piero",
+            "team_name": "Ciao"
+        },
+        {
+            "trainer_name": "piero",
+            "team_name": "se7venzoo"
         }
     ]
 }
