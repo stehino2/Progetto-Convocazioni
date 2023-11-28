@@ -121,12 +121,12 @@ class ServerHandler(BaseHTTPRequestHandler):
         if "Trainers" not in data or not isinstance(data["Trainers"], list):
             data["Trainers"] = []
 
-        #cerco il nome dell'allenatore e il nome della squadra nel file json
+        #ottiene il nome dell'allenatore e il nome della squadra nel dato arrivato
         trainer_name = datad["trainer_name"]
         team_name = datad["team_name"]
 
         #creo il dizionario contentenente il nome dell'allenatore e il nome della squadra
-        global global_trainer 
+        global global_trainer #possibile non usare global ......
         global_trainer = {"trainer_name": trainer_name, "team_name": team_name}
 
         if global_trainer in data.get("Trainers", []):
@@ -156,7 +156,7 @@ class ServerHandler(BaseHTTPRequestHandler):
 
         '''
         POTREI ANCHE TOGLIERE LA PARTE DI CONTROLLO TRY CATCH E ANCHE IF TRAINERS NOT IN DATA ETCC..
-        '''
+        '''        #cerco il nome dell'allenatore e il nome della squadra nel file json
                 
         #controllo se esiste "Trainers" all'interno del file json (probabilmente posso eliminare questa riga di codice)
         if "Trainers" not in data or not isinstance(data["Trainers"], list):
