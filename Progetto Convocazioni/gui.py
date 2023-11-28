@@ -41,6 +41,8 @@ import json
 ip_address = "127.0.0.1"
 port = "8080"
 
+#diz
+
 def registerTrainer(item):
     url = "http://" + ip_address + ":" + port + "/register_trainer"
     headers = {'Content-type' : 'application/json'} #tipo di dato che mando
@@ -78,12 +80,19 @@ def login_screen():
             trainer_name = values["trainer_name"]
             team_name = values["team_name"]
 
+            if (any(chr.isdigit() for chr in trainer_name)) == True: #controllo se ci sono numeri
+                sg.PopupOK("Hai inserito valori non validi")
+                window.close()
+                login_screen()
+
             trainer = {"trainer_name" : trainer_name, "team_name" : team_name} 
             trainer = (json.dumps(trainer))
 
             if loginTrainer(trainer).status_code == 200:
                 window.hide()
-                main_screen(trainer_name)
+                main_screen(trainer, trainer_name, team_name)
+            else:
+                sg.PopupOK("Elemento non esistente")
         elif event == "Registrati":
             #window.close()
             register_screen()
@@ -107,9 +116,17 @@ def register_screen():
             break
         elif event == "Annulla":
             window.close()
-        elif event == "Registra":
+        elif event == "Registra": 
             trainer_name = values["trainer_name"]
             team_name = values["team_name"]
+            #assegno trainer _name = a nome allenatore che mi servira poui per inviare i giocatori
+            global nome_allenatore 
+            nome_allenatore = trainer_name
+            global diz
+            diz={nome_allenatore : []}
+            if (any(chr.isdigit() for chr in trainer_name)) == True: #controllo se ci sono numeri
+                sg.PopupOK("Hai inserito valori non validi")
+                break
 
             trainer = {"trainer_name" : trainer_name, "team_name" : team_name} 
             trainer = (json.dumps(trainer))
@@ -129,7 +146,7 @@ def register_screen():
 
     window.close()
 
-def main_screen(trainer_name):
+def main_screen(trainer, trainer_name, team_name):
     layout = [
         [sg.Text("Benvenuto allenatore " + trainer_name)],
         [sg.Button("Aggiungi giocatore"), sg.Button("Logout")]
@@ -142,11 +159,11 @@ def main_screen(trainer_name):
         if event == sg.WINDOW_CLOSED or event == "Logout":
             break
         elif event == "Aggiungi giocatore":
-            add_players_screen(trainer_name)
+            add_players_screen(trainer)
 
     window.close()
 
-def add_players_screen(trainer_name):
+def add_players_screen(trainer):
     layout = [
         [sg.Text("Registrazione Giocatore")],
         [sg.Text("Nome"), sg.InputText(key = "player_name")],
@@ -163,12 +180,16 @@ def add_players_screen(trainer_name):
         if event == sg.WINDOW_CLOSED: #agigungi tasto
             break
         elif event == "Aggiungi":
+            global diz
+            global nome_allenatore
             player_name = values["player_name"]
             player_surname = values["player_surname"]
             player_birth = values["player_birth"]
             player = {"player_name": player_name, "player_surname": player_surname, "player_birth": player_birth}
             player = (json.dumps(player))
-            addPlayer(player)
+            diz[nome_allenatore].append(player)
+            dizjs = (json.dumps(diz))
+            addPlayer(dizjs) 
 
     window.close()    
 
