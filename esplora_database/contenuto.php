@@ -9,7 +9,7 @@
 
  $selected_table = $_GET['table'];
 
- $query = "SELECT * FROM " . $selected_table;
+ $query = "SELECT * FROM " . $selected_table; // mi mostra il contenuto della tabella
  $result = mysqli_query($connect, $query)
   or die("Errore nella query" . mysqli_error($connect));
 
@@ -29,12 +29,11 @@
 
  echo "</tr>";
 
- //cerco i dati
- mysqli_data_seek($result, 0);
-
- //stampo i dati
+ //stampo i dati e ottengo le righe per il risultato della query
+ //mysqli_fetch_assoc estrae la riga corrente del risultato query in un array associativo
  while ($row = mysqli_fetch_assoc($result)) {
     echo "<tr>";
+    //stampo i valori all interno delle celle
     foreach ($row as $value) {
         echo "<td>$value</td>";
     }
