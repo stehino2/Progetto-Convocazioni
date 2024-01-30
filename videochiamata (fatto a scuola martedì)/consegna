@@ -1,0 +1,11 @@
+Scrivere in python dei client che permettano a dei diversi utenti di effettuare una videochiamata tra loro.
+Oltre alla videochiamata il client deve promettere ai due utenti di usare una chat testuale tra di loro
+
+La videochiamata deve permette di inserire 3 filtri (Open CV e Numpy):
+- Reds, rendere l'immagine rossa
+- Upside down, girare a testa in giù l'immagine
+- Blurr, sfuochi l'immagine
+
+Obbligatorio: 2 Client che interagiscono tra loro con la videochiamata e con la chat + 3 filtri scritti sopra.
+
+Extra: Più client che videochiamano e chattano + Aggiunta di uno o più filtri a piacere. 
